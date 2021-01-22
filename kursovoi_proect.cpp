@@ -13,7 +13,7 @@
 #endif
 #endif
 
-using namespace std;	//пространства имён std
+using namespace std;
 
 struct NOTE		//структура
 {
@@ -25,7 +25,7 @@ struct NOTE		//структура
 	int day;
 };
 
-bool checkPhone(char _phone[13]);		//правда или ложь : размерность массива
+bool checkPhone(char _phone[12]);		//правда или ложь : размерность массива
 short inputCheckNumbers(short min, short max);		//валидация введенных данных
 void showContacts(std::vector<NOTE> contacts, bool line);		//просмотр контактов
 void searchContacts(std::vector<NOTE> contacts);		//поиск контактов
@@ -117,10 +117,11 @@ int main()		//точка входа программы
 	return 0;
 }
 
-bool checkPhone(char _phone[13])		//проверка корректности введенного номера
+bool checkPhone(char _phone[12])		//проверка корректности введенного номера
 {
+	int attempt = 3;
 	bool result;
-	for (unsigned short i = 0; i < 13; i++)		
+	for (unsigned short i = 0; i < 11; i++)
 		{
 			if (i > 10 && _phone[i] == '\0')
 				{
@@ -130,13 +131,15 @@ bool checkPhone(char _phone[13])		//проверка корректности в
 				result = true;
 			else
 				{
-					while (std::cin.fail())		//пока в std::cin есть ошибка он будет выполнятся бесконечно
+					while (std::cin.fail() && (attempt < 0))		//дает три попытки на ввод номера
 						{
+						std::cout << "У вас осталось " << attempt << " попыток на ввод." << std::endl;
 							std::cin.clear();
 							std::cin.ignore(std::cin.rdbuf()->in_avail());
+							attempt--;
 						}
 					result = false;
-					std::cout << "Неккоректное значение , в номере должно быть 11 цифр." << std::endl;
+					std::cout << "Неккоректное значение , в номере должно быть 11 цифр ERROR." << std::endl;
 					break;		//выход из цикла
 				}
 		}
@@ -244,17 +247,17 @@ void openFile(std::vector<NOTE>& contacts, std::string path)		//открывае
 	std::ifstream ifs(path);
 	if (ifs.is_open())
 	{
-		while (!ifs.eof())
+		while (!ifs.eof())		//цикл до конца файла
 		{
 			NOTE _note;
-			char _phone[13];
+			char _phone[12];
 			ifs >> _note.name >> _note.lastname >> _phone >> _note.day >> _note.month >>
 				_note.year;
-			/*if (checkPhone(_phone))
+			if (checkPhone(_phone))
 			{
 				_note.phone = _phone;
 				contacts.push_back(_note);
-			}*/
+			}
 		}
 	}
 	else
@@ -262,7 +265,7 @@ void openFile(std::vector<NOTE>& contacts, std::string path)		//открывае
 	ifs.close();
 }
 
-void saveFile(std::vector<NOTE>& contacts, std::string path)
+void saveFile(std::vector<NOTE>& contacts, std::string path)		//сохранение файла
 {
 	std::ofstream ofs(path);
 	if (ofs.is_open())
@@ -291,18 +294,18 @@ void removeContact(std::vector<NOTE>& contacts)		//функция удалени
 
 NOTE addContact()		//функция с добавлением контакта с типом Note
 {
-	char _phone[13];
+	char _phone[12];
 	NOTE _contact;
 	std::cout << "Имя контакта: " << std::endl;
 	std::cin >> _contact.name;
 	std::cout << "Фамилия контакта: " << std::endl;
 	std::cin >> _contact.lastname;
 	std::cout << "Номер телефона: " << std::endl;
-	std::cin.getline(_phone, 13, '\n');
-	std::cin.getline(_phone, 13, '\n');
+	std::cin.getline(_phone, 12, '\n');
+	std::cin.getline(_phone, 12, '\n');
 	while (!checkPhone(_phone))
 	{
-		std::cin.getline(_phone, 13, '\n');
+		std::cin.getline(_phone, 11, '\n');
 	}
 	while (std::cin.fail())
 	{
@@ -315,6 +318,6 @@ NOTE addContact()		//функция с добавлением контакта �
 	std::cout << "Месяц: ";
 	_contact.month = inputCheckNumbers(1, 12);
 	std::cout << "Год: ";
-	_contact.year = inputCheckNumbers(1900, 2019);
+	_contact.year = inputCheckNumbers(1900, 2021);
 	return _contact;
 }
