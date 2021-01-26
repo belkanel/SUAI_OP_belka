@@ -245,7 +245,7 @@ void bubble(std::vector<NOTE>& contacts)		//Сортировка Пузырьк�
 void openFile(std::vector<NOTE>& contacts, std::string path)		//открывает файл в котором храним контакты
 {
 	std::ifstream ifs(path);
-	if (ifs.is_open())
+	if (ifs.is_open() && !ifs.fail())
 	{
 		while (!ifs.eof())		//цикл до конца файла
 		{
@@ -261,7 +261,7 @@ void openFile(std::vector<NOTE>& contacts, std::string path)		//открывае
 		}
 	}
 	else
-		std::cout << "Файл не найден!" << std::endl;
+		std::cout << "Файл не найден или поврежден!" << std::endl;
 	ifs.close();
 }
 
